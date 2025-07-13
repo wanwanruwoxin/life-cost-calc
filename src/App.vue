@@ -205,19 +205,4 @@ const getFrequencyLabel = (freq: FrequencyType) => {
   </main>
 </template>
 
-<style scoped>
-/* Vue过渡动画效果 */
-.slide-up-enter-active {
-  transition: all 0.5s ease;
-}
-
-.slide-up-enter-from {
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-.slide-up-enter-to {
-  opacity: 1;
-  transform: translateY(0);
-}
-</style>
+<style scoped></style>
