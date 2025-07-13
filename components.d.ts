@@ -12,10 +12,13 @@ declare module 'vue' {
     QCard: typeof import('quasar')['QCard']
     QCardSection: typeof import('quasar')['QCardSection']
     QHeader: typeof import('quasar')['QHeader']
+    QIcon: typeof import('quasar')['QIcon']
     QInput: typeof import('quasar')['QInput']
     QLayout: typeof import('quasar')['QLayout']
     QPage: typeof import('quasar')['QPage']
     QPageContainer: typeof import('quasar')['QPageContainer']
     QRadio: typeof import('quasar')['QRadio']
+    QToolbar: typeof import('quasar')['QToolbar']
+    QToolbarTitle: typeof import('quasar')['QToolbarTitle']
   }
 }
