@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     QBtn: typeof import('quasar')['QBtn']
+    QBtnGroup: typeof import('quasar')['QBtnGroup']
     QCard: typeof import('quasar')['QCard']
     QCardSection: typeof import('quasar')['QCardSection']
     QHeader: typeof import('quasar')['QHeader']
@@ -18,6 +19,9 @@ declare module 'vue' {
     QPage: typeof import('quasar')['QPage']
     QPageContainer: typeof import('quasar')['QPageContainer']
     QRadio: typeof import('quasar')['QRadio']
+    QSpace: typeof import('quasar')['QSpace']
+    QTab: typeof import('quasar')['QTab']
+    QTabs: typeof import('quasar')['QTabs']
     QToolbar: typeof import('quasar')['QToolbar']
     QToolbarTitle: typeof import('quasar')['QToolbarTitle']
   }
