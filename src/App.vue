@@ -4,25 +4,24 @@
 
 <template>
   <QLayout view="lHh Lpr lFf" class="max-w-sm mx-auto bg-white">
+    <!-- 头部导航栏 -->
+    <QHeader class="bg-gradient-to-r from-yellow-200 to-yellow-100 text-gray-800 shadow-lg">
+      <QToolbar class="px-4 py-3 " flex="~ justify-center">
+        <div class="text-lg font-bold text-gray-700">羊羊的记账本</div>
+      </QToolbar>
+    </QHeader>
+    
     <!-- 主内容区域 -->
     <QPageContainer class="bg-gradient-to-br from-gray-50 to-blue-100">
       <RouterView />
     </QPageContainer>
     
     <!-- 底部导航栏 -->
-    <QFooter class="bg-white border-t border-gray-200 shadow-lg">
-      <QTabPanels v-model="$route.path" animated class="bg-transparent">
-        <QTabPanel name="/records" class="p-0" />
-        <QTabPanel name="/analysis" class="p-0" />
-        <QTabPanel name="/calculator" class="p-0" />
-        <QTabPanel name="/discover" class="p-0" />
-        <QTabPanel name="/profile" class="p-0" />
-      </QTabPanels>
-      
+    <QFooter class="bg-gradient-to-r from-yellow-100 to-yellow-50 border-t border-yellow-200 shadow-lg relative">    
       <QTabs
         v-model="$route.path"
-        class="text-gray-600 bg-white"
-        active-color="primary"
+        class="text-gray-600 bg-transparent"
+        active-color="blue"
         indicator-color="transparent"
         align="justify"
       >
@@ -33,7 +32,7 @@
           @click="$router.push('/records')"
           class="min-h-16 py-2"
           :class="{
-            'text-primary': $route.path === '/records',
+            'text-yellow-600': $route.path === '/records',
             'text-gray-400': $route.path !== '/records'
           }"
         />
@@ -44,7 +43,7 @@
           @click="$router.push('/analysis')"
           class="min-h-16 py-2"
           :class="{
-            'text-primary': $route.path === '/analysis',
+            'text-yellow-600': $route.path === '/analysis',
             'text-gray-400': $route.path !== '/analysis'
           }"
         />
@@ -55,7 +54,7 @@
           @click="$router.push('/calculator')"
           class="min-h-16 py-2 relative"
           :class="{
-            'text-primary': $route.path === '/calculator',
+            'text-yellow-600': $route.path === '/calculator',
             'text-gray-400': $route.path !== '/calculator'
           }"
         />
@@ -66,7 +65,7 @@
           @click="$router.push('/discover')"
           class="min-h-16 py-2"
           :class="{
-            'text-primary': $route.path === '/discover',
+            'text-yellow-600': $route.path === '/discover',
             'text-gray-400': $route.path !== '/discover'
           }"
         />
@@ -77,7 +76,7 @@
           @click="$router.push('/profile')"
           class="min-h-16 py-2"
           :class="{
-            'text-primary': $route.path === '/profile',
+            'text-yellow-600': $route.path === '/profile',
             'text-gray-400': $route.path !== '/profile'
           }"
         />
