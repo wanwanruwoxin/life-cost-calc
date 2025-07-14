@@ -13,7 +13,9 @@
     
     <!-- 主内容区域 -->
     <QPageContainer class="bg-gradient-to-br from-gray-50 to-blue-100">
-      <RouterView />
+      <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen pb-20">
+        <RouterView />
+      </QPage>
     </QPageContainer>
     
     <!-- 底部导航栏 -->
@@ -48,14 +50,14 @@
           }"
         />
         <QTab
-          name="/calculator"
+          name="/expense"
           icon="add_circle"
           label="记账"
-          @click="$router.push('/calculator')"
+          @click="$router.push('/expense')"
           class="min-h-16 py-2 relative"
           :class="{
-            'text-yellow-600': $route.path === '/calculator',
-            'text-gray-400': $route.path !== '/calculator'
+            'text-yellow-600': $route.path === '/expense',
+            'text-gray-400': $route.path !== '/expense'
           }"
         />
         <QTab
