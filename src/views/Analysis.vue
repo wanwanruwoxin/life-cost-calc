@@ -112,8 +112,8 @@ const getFrequencyColor = (frequency: string) => {
 </script>
 
 <template>
-  <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen p-4">
-    <div class="w-full max-w-6xl mx-auto">
+  <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen p-4 pb-20">
+    <div class="w-full max-w-md mx-auto">
       <!-- 页面标题 -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-800 mb-2">数据分析</h1>
@@ -159,7 +159,7 @@ const getFrequencyColor = (frequency: string) => {
         </QCard>
       </div>
       
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="space-y-6">
         <!-- 频率分析 -->
         <QCard class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95">
           <QCardSection class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-t-4 border-b border-indigo-100">
@@ -241,37 +241,35 @@ const getFrequencyColor = (frequency: string) => {
           </div>
         </QCardSection>
         
-        <QCardSection>
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="text-left py-3 px-4 font-medium text-gray-700">项目</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700">频率</th>
-                  <th class="text-right py-3 px-4 font-medium text-gray-700">单次金额</th>
-                  <th class="text-right py-3 px-4 font-medium text-gray-700">月支出</th>
-                  <th class="text-right py-3 px-4 font-medium text-gray-700">年支出</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr 
-                  v-for="record in records" 
-                  :key="record.id"
-                  class="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                >
-                  <td class="py-3 px-4 font-medium text-gray-800">{{ record.description }}</td>
-                  <td class="py-3 px-4">
-                    <QBadge 
-                      :color="getFrequencyColor(record.frequency)"
-                      :label="getFrequencyLabel(record.frequency)"
-                    />
-                  </td>
-                  <td class="py-3 px-4 text-right text-gray-700">{{ formatCurrency(record.price) }}</td>
-                  <td class="py-3 px-4 text-right font-semibold text-gray-800">{{ formatCurrency(record.monthlyPrice) }}</td>
-                  <td class="py-3 px-4 text-right font-semibold text-gray-800">{{ formatCurrency(record.yearlyPrice) }}</td>
-                </tr>
-              </tbody>
-            </table>
+        <QCardSection class="p-0">
+          <div class="space-y-3 p-4">
+            <div 
+              v-for="record in records" 
+              :key="record.id"
+              class="bg-gray-50 rounded-2 p-3 border border-gray-200"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="font-medium text-gray-800">{{ record.description }}</h4>
+                <QBadge 
+                  :color="getFrequencyColor(record.frequency)"
+                  :label="getFrequencyLabel(record.frequency)"
+                />
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-xs">
+                <div class="text-center">
+                  <div class="text-gray-500">单次</div>
+                  <div class="font-semibold text-gray-800">{{ formatCurrency(record.price) }}</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-gray-500">月支出</div>
+                  <div class="font-semibold text-gray-800">{{ formatCurrency(record.monthlyPrice) }}</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-gray-500">年支出</div>
+                  <div class="font-semibold text-gray-800">{{ formatCurrency(record.yearlyPrice) }}</div>
+                </div>
+              </div>
+            </div>
           </div>
         </QCardSection>
       </QCard>

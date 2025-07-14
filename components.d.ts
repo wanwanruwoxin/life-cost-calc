@@ -8,21 +8,33 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    QAvatar: typeof import('quasar')['QAvatar']
+    QBadge: typeof import('quasar')['QBadge']
     QBtn: typeof import('quasar')['QBtn']
     QBtnGroup: typeof import('quasar')['QBtnGroup']
     QCard: typeof import('quasar')['QCard']
     QCardSection: typeof import('quasar')['QCardSection']
+    QFooter: typeof import('quasar')['QFooter']
     QHeader: typeof import('quasar')['QHeader']
     QIcon: typeof import('quasar')['QIcon']
     QInput: typeof import('quasar')['QInput']
+    QItem: typeof import('quasar')['QItem']
+    QItemLabel: typeof import('quasar')['QItemLabel']
+    QItemSection: typeof import('quasar')['QItemSection']
     QLayout: typeof import('quasar')['QLayout']
+    QList: typeof import('quasar')['QList']
     QPage: typeof import('quasar')['QPage']
     QPageContainer: typeof import('quasar')['QPageContainer']
     QRadio: typeof import('quasar')['QRadio']
     QSpace: typeof import('quasar')['QSpace']
     QTab: typeof import('quasar')['QTab']
+    QTabPanel: typeof import('quasar')['QTabPanel']
+    QTabPanels: typeof import('quasar')['QTabPanels']
     QTabs: typeof import('quasar')['QTabs']
     QToolbar: typeof import('quasar')['QToolbar']
     QToolbarTitle: typeof import('quasar')['QToolbarTitle']
+    QTooltip: typeof import('quasar')['QTooltip']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
   }
 }

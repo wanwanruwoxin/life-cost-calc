@@ -56,8 +56,8 @@ const totalYearly = computed(() => {
 </script>
 
 <template>
-  <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen p-4">
-    <div class="w-full max-w-6xl mx-auto">
+  <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen p-4 pb-20">
+    <div class="w-full max-w-md mx-auto">
       <!-- 页面标题 -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-800 mb-2">支出记录</h1>

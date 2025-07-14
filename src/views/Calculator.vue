@@ -40,8 +40,8 @@ const getFrequencyLabel = (freq: FrequencyType) => {
 </script>
 
 <template>
-  <QPage class="flex flex-center bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen p-4">
-    <div class="w-full max-w-150">
+  <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen p-4 pb-20">
+    <div class="w-full max-w-md mx-auto">
       <!-- 输入表单卡片 -->
       <QCard class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95 mb-8" flat bordered>
         <QCardSection class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-t-4 border-b border-indigo-100">
