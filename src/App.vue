@@ -1,5 +1,26 @@
 <script setup lang="ts">
-// App.vue 移动端布局组件
+import { invoke } from '@tauri-apps/api/core';
+import { attachConsole } from '@tauri-apps/plugin-log';
+
+let initialized = false;
+let detach: (() => void) | null = null;
+
+onMounted(async () => {
+  if (!initialized) {
+    // 附加控制台日志
+    detach = await attachConsole();
+
+    await invoke('initialize_app');
+    initialized = true;
+  }
+});
+
+// 组件卸载时分离控制台
+onUnmounted(() => {
+  if (detach) {
+    detach();
+  }
+});
 </script>
 
 <template>
