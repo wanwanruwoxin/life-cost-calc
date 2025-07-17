@@ -15,7 +15,7 @@ onMounted(async () => {
     <!-- 头部导航栏 -->
     <QHeader class="bg-gradient-to-r from-yellow-200 to-yellow-100 text-gray-800 shadow-lg">
       <QToolbar class="px-4 py-3 " flex="~ justify-center">
-        <div class="text-lg font-bold text-gray-700">羊羊的记账本</div>
+        <div class="text-lg font-bold text-gray-700"></div>
       </QToolbar>
     </QHeader>
     
