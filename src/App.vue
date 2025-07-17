@@ -1,25 +1,12 @@
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/core';
-import { attachConsole } from '@tauri-apps/plugin-log';
-
-let initialized = false;
-let detach: (() => void) | null = null;
+import { invoke } from "@tauri-apps/api/core";
+import { attachConsole, info } from "@tauri-apps/plugin-log";
 
 onMounted(async () => {
-  if (!initialized) {
-    // 附加控制台日志
-    detach = await attachConsole();
-
-    await invoke('initialize_app');
-    initialized = true;
-  }
-});
-
-// 组件卸载时分离控制台
-onUnmounted(() => {
-  if (detach) {
-    detach();
-  }
+  // 附加控制台日志
+  await attachConsole();
+  info("初始化完成");
+  await invoke("initialize_app");
 });
 </script>
 
