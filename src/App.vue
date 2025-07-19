@@ -1,49 +1,33 @@
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/core';
-import { attachConsole } from '@tauri-apps/plugin-log';
-
-let initialized = false;
-let detach: (() => void) | null = null;
-
-onMounted(async () => {
-  if (!initialized) {
-    // 附加控制台日志
-    detach = await attachConsole();
-
-    await invoke('initialize_app');
-    initialized = true;
-  }
-});
-
-// 组件卸载时分离控制台
-onUnmounted(() => {
-  if (detach) {
-    detach();
-  }
-});
 </script>
 
 <template>
-  <QLayout view="lHh Lpr lFf" class="max-w-sm mx-auto bg-white">
+  <QLayout view="lHh Lpr lFf" class="mx-auto bg-white min-h-screen">
     <!-- 头部导航栏 -->
-    <QHeader class="bg-gradient-to-r from-yellow-200 to-yellow-100 text-gray-800 shadow-lg">
-      <QToolbar class="px-4 py-3 " flex="~ justify-center">
+    <QHeader
+      class="bg-gradient-to-r from-yellow-200 to-yellow-100 text-gray-800 shadow-lg h-60px"
+    >
+      <QToolbar class="h-full flex items-center justify-center">
         <div class="text-lg font-bold text-gray-700">羊羊的记账本</div>
       </QToolbar>
     </QHeader>
-    
+
     <!-- 主内容区域 -->
     <QPageContainer class="bg-gradient-to-br from-gray-50 to-blue-100">
-      <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen pb-20">
-        <RouterView />
-      </QPage>
+      <QScrollArea class="h-[calc(100vh-120px)] w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg">
+        <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 h-full p-4">
+          <RouterView />
+        </QPage>
+      </QScrollArea>
     </QPageContainer>
-    
+
     <!-- 底部导航栏 -->
-    <QFooter class="bg-gradient-to-r from-yellow-100 to-yellow-50 border-t border-yellow-200 shadow-lg relative">    
+    <QFooter
+      class="bg-gradient-to-r from-yellow-100 to-yellow-50 border-t border-yellow-200 shadow-lg h-80px"
+    >
       <QTabs
         v-model="$route.path"
-        class="text-gray-600 bg-transparent"
+        class="text-gray-600 bg-transparent h-full"
         active-color="blue"
         indicator-color="transparent"
         align="justify"
@@ -53,10 +37,10 @@ onUnmounted(() => {
           icon="receipt_long"
           label="明细"
           @click="$router.push('/records')"
-          class="min-h-16 py-2"
+          class="h-full flex flex-col items-center justify-center"
           :class="{
             'text-yellow-600': $route.path === '/records',
-            'text-gray-400': $route.path !== '/records'
+            'text-gray-400': $route.path !== '/records',
           }"
         />
         <QTab
@@ -64,10 +48,10 @@ onUnmounted(() => {
           icon="analytics"
           label="图表"
           @click="$router.push('/analysis')"
-          class="min-h-16 py-2"
+          class="h-full flex flex-col items-center justify-center"
           :class="{
             'text-yellow-600': $route.path === '/analysis',
-            'text-gray-400': $route.path !== '/analysis'
+            'text-gray-400': $route.path !== '/analysis',
           }"
         />
         <QTab
@@ -75,10 +59,10 @@ onUnmounted(() => {
           icon="add_circle"
           label="记账"
           @click="$router.push('/expense')"
-          class="min-h-16 py-2 relative"
+          class="h-full flex flex-col items-center justify-center"
           :class="{
             'text-yellow-600': $route.path === '/expense',
-            'text-gray-400': $route.path !== '/expense'
+            'text-gray-400': $route.path !== '/expense',
           }"
         />
         <QTab
@@ -86,10 +70,10 @@ onUnmounted(() => {
           icon="explore"
           label="发现"
           @click="$router.push('/discover')"
-          class="min-h-16 py-2"
+          class="h-full flex flex-col items-center justify-center"
           :class="{
             'text-yellow-600': $route.path === '/discover',
-            'text-gray-400': $route.path !== '/discover'
+            'text-gray-400': $route.path !== '/discover',
           }"
         />
         <QTab
@@ -97,10 +81,10 @@ onUnmounted(() => {
           icon="person"
           label="我的"
           @click="$router.push('/profile')"
-          class="min-h-16 py-2"
+          class="h-full flex flex-col items-center justify-center"
           :class="{
             'text-yellow-600': $route.path === '/profile',
-            'text-gray-400': $route.path !== '/profile'
+            'text-gray-400': $route.path !== '/profile',
           }"
         />
       </QTabs>
@@ -108,4 +92,6 @@ onUnmounted(() => {
   </QLayout>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* 样式已迁移到UnoCSS类中 */
+</style>
