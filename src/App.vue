@@ -1,4 +1,12 @@
 <script setup lang="ts">
+
+const thumbStyle: any = {
+  right: "4px",
+  borderRadius: "5px",
+  backgroundColor: "#d97706", 
+  width: "5px",
+  opacity: 0.75,
+};
 </script>
 
 <template>
@@ -14,7 +22,11 @@
 
     <!-- 主内容区域 -->
     <QPageContainer class="bg-gradient-to-br from-gray-50 to-blue-100">
-      <QScrollArea class="h-[calc(100vh-120px)] w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg">
+      <QScrollArea
+        class="h-[calc(100vh-120px)] w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg"
+        :visible="false"
+        :thumb-style="thumbStyle"
+      >
         <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 h-full p-4">
           <RouterView />
         </QPage>
