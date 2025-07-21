@@ -1,9 +1,8 @@
 <script setup lang="ts">
-
 const thumbStyle: any = {
   right: "4px",
   borderRadius: "5px",
-  backgroundColor: "#d97706", 
+  backgroundColor: "#d97706",
   width: "5px",
   opacity: 0.75,
 };

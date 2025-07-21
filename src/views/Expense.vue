@@ -1,10 +1,27 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 const activeTab = ref("expense");
 const selectedCategory = ref("");
 const amount = ref<number>(0);
 const note = ref("");
+const amountString = ref("0");
+
+// 计算显示的金额
+const displayAmount = computed(() => {
+  if (amountString.value === "0") return "0.00";
+
+  // 如果包含小数点
+  if (amountString.value.includes(".")) {
+    const parts = amountString.value.split(".");
+    if (parts[1] && parts[1].length === 1) {
+      return amountString.value + "0";
+    }
+    return amountString.value;
+  }
+
+  return amountString.value + ".00";
+});
 
 // 支出分类数据
 const expenseCategories = [
@@ -56,6 +73,60 @@ const incomeCategories = [
 
 const selectCategory = (category: any) => {
   selectedCategory.value = category.id;
+  // 重置金额
+  amountString.value = "0";
+  amount.value = 0;
+};
+
+// 数字键盘方法
+const inputNumber = (digit: string) => {
+  if (amountString.value === "0") {
+    amountString.value = digit;
+  } else {
+    // 限制小数点后最多两位
+    if (amountString.value.includes(".")) {
+      const parts = amountString.value.split(".");
+      if (parts[1] && parts[1].length >= 2) return;
+    }
+    amountString.value += digit;
+  }
+  amount.value = parseFloat(amountString.value);
+};
+
+const inputDecimal = () => {
+  if (!amountString.value.includes(".")) {
+    amountString.value += ".";
+  }
+};
+
+const deleteLastDigit = () => {
+  if (amountString.value.length > 1) {
+    amountString.value = amountString.value.slice(0, -1);
+  } else {
+    amountString.value = "0";
+  }
+  amount.value = parseFloat(amountString.value) || 0;
+};
+
+const clearAmount = () => {
+  amountString.value = "0";
+  amount.value = 0;
+};
+
+const addOperation = () => {
+  // 简单的加法操作，可以扩展为更复杂的计算器功能
+  const currentAmount = parseFloat(amountString.value) || 0;
+  amountString.value = (currentAmount + 1).toString();
+  amount.value = parseFloat(amountString.value);
+};
+
+const subtractOperation = () => {
+  // 简单的减法操作
+  const currentAmount = parseFloat(amountString.value) || 0;
+  if (currentAmount > 0) {
+    amountString.value = Math.max(0, currentAmount - 1).toString();
+    amount.value = parseFloat(amountString.value);
+  }
 };
 
 const saveRecord = () => {
@@ -75,12 +146,16 @@ const saveRecord = () => {
   // 重置表单
   selectedCategory.value = "";
   amount.value = 0;
+  amountString.value = "0";
   note.value = "";
 };
 </script>
 
 <template>
-  <div class="w-full max-w-md mx-auto p-4">
+  <div
+    class="w-full max-w-md mx-auto p-4"
+    :class="{ 'main-content': selectedCategory }"
+  >
     <!-- 顶部标签页 -->
     <QCard
       class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95 mb-6"
@@ -158,57 +233,181 @@ const saveRecord = () => {
       </QCardSection>
     </QCard>
 
-    <!-- 金额输入 -->
-    <QCard
-      class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95 mb-6"
-      flat
-      bordered
-    >
-      <QCardSection
-        class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-t-4 border-b border-yellow-200"
+    <!-- 数字键盘 - 固定在底部 -->
+    <Transition name="slide-up" appear>
+      <div
+        v-if="selectedCategory"
+        class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50"
       >
-        <div class="text-lg font-medium flex items-center">
-          <QIcon name="payments" class="mr-2" />
-          金额
+        <!-- 金额显示区域 -->
+        <div
+          class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 border-b border-yellow-200"
+        >
+          <div class="text-center">
+            <div class="text-sm text-gray-600 mb-1">输入金额</div>
+            <div
+              class="text-3xl font-bold text-gray-800 min-h-[3rem] flex items-center justify-center"
+            >
+              ¥{{ displayAmount }}
+            </div>
+          </div>
         </div>
-      </QCardSection>
 
-      <QCardSection class="pt-4">
-        <QInput
-          v-model.number="amount"
-          type="number"
-          label="请输入金额"
-          outlined
-          prefix="¥"
-          suffix="元"
-          class="text-2xl"
-          input-class="text-center text-2xl font-bold"
-        />
+        <!-- 备注输入 -->
+        <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
+          <QInput
+            v-model="note"
+            label="备注（可选）"
+            outlined
+            dense
+            maxlength="50"
+            class="bg-white"
+          />
+        </div>
 
-        <QInput
-          v-model="note"
-          label="备注（可选）"
-          outlined
-          class="mt-4"
-          maxlength="50"
-        />
-      </QCardSection>
-    </QCard>
+        <!-- 数字键盘 -->
+        <div class="p-4 bg-white">
+          <div class="grid grid-cols-4 gap-3">
+            <!-- 第一行 -->
+            <QBtn
+              @click="inputNumber('7')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              7
+            </QBtn>
+            <QBtn
+              @click="inputNumber('8')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              8
+            </QBtn>
+            <QBtn
+              @click="inputNumber('9')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              9
+            </QBtn>
+            <QBtn
+              @click="deleteLastDigit"
+              class="operation-btn"
+              color="red-5"
+              unelevated
+              size="lg"
+            >
+              <QIcon name="backspace" />
+            </QBtn>
 
-    <!-- 保存按钮 -->
-    <div class="flex justify-center">
-      <QBtn
-        @click="saveRecord"
-        :disable="!selectedCategory || !amount"
-        color="yellow-600"
-        size="lg"
-        class="px-12 py-4 rounded-3 text-lg font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-        unelevated
-      >
-        <QIcon name="save" class="mr-2" />
-        保存记录
-      </QBtn>
-    </div>
+            <!-- 第二行 -->
+            <QBtn
+              @click="inputNumber('4')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              4
+            </QBtn>
+            <QBtn
+              @click="inputNumber('5')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              5
+            </QBtn>
+            <QBtn
+              @click="inputNumber('6')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              6
+            </QBtn>
+            <QBtn
+              @click="addOperation"
+              class="operation-btn"
+              color="blue-5"
+              unelevated
+              size="lg"
+            >
+              <QIcon name="add" />
+            </QBtn>
+
+            <!-- 第三行 -->
+            <QBtn
+              @click="inputNumber('1')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              1
+            </QBtn>
+            <QBtn
+              @click="inputNumber('2')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              2
+            </QBtn>
+            <QBtn
+              @click="inputNumber('3')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              3
+            </QBtn>
+            <QBtn
+              @click="subtractOperation"
+              class="operation-btn"
+              color="orange-5"
+              unelevated
+              size="lg"
+            >
+              <QIcon name="remove" />
+            </QBtn>
+
+            <!-- 第四行 -->
+            <QBtn
+              @click="inputNumber('0')"
+              class="number-btn"
+              unelevated
+              size="lg"
+            >
+              0
+            </QBtn>
+            <QBtn @click="inputDecimal" class="number-btn" unelevated size="lg">
+              .
+            </QBtn>
+            <QBtn
+              @click="clearAmount"
+              class="operation-btn"
+              color="grey-5"
+              unelevated
+              size="lg"
+            >
+              <QIcon name="clear" />
+            </QBtn>
+            <QBtn
+              @click="saveRecord"
+              :disable="!selectedCategory || !amount"
+              class="complete-btn"
+              color="yellow-600"
+              unelevated
+              size="lg"
+            >
+              <QIcon name="check" />
+            </QBtn>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -224,5 +423,86 @@ const saveRecord = () => {
 
 .gap-3 {
   gap: 0.75rem;
+}
+
+/* 数字键盘按钮样式 */
+.number-btn {
+  @apply bg-gray-100 text-gray-800 font-semibold rounded-2 min-h-[3.5rem] transition-all duration-200;
+}
+
+.number-btn:hover {
+  @apply bg-gray-200 transform scale-105;
+}
+
+.number-btn:active {
+  @apply bg-gray-300 transform scale-95;
+}
+
+.operation-btn {
+  @apply font-semibold rounded-2 min-h-[3.5rem] transition-all duration-200;
+}
+
+.operation-btn:hover {
+  @apply transform scale-105;
+}
+
+.operation-btn:active {
+  @apply transform scale-95;
+}
+
+.complete-btn {
+  @apply font-semibold rounded-2 min-h-[3.5rem] transition-all duration-200;
+}
+
+.complete-btn:hover {
+  @apply transform scale-105;
+}
+
+.complete-btn:active {
+  @apply transform scale-95;
+}
+
+/* 从底部滑出动画 */
+.slide-up-enter-active {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19);
+}
+
+.slide-up-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.slide-up-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+/* 淡入动画 */
+.fade-in-enter-active {
+  transition: all 0.5s ease-out;
+  transition-delay: 0.2s;
+}
+
+.fade-in-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.fade-in-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-in-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* 确保主内容区域有足够的底部间距，避免被键盘遮挡 */
+.main-content {
+  padding-bottom: 400px;
 }
 </style>

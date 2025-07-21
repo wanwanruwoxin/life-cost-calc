@@ -6,7 +6,18 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const CALCULATOR_BUTTONS: typeof import('./constants/calculator')['CALCULATOR_BUTTONS']
+  const CALCULATOR_OPERATIONS: typeof import('./constants/calculator')['CALCULATOR_OPERATIONS']
+  const CalculatorOperation: typeof import('./types/calculator')['CalculatorOperation']
+  const CalculatorState: typeof import('./types/calculator')['CalculatorState']
+  const EVENT_NAMES: typeof import('./utils/eventBus')['EVENT_NAMES']
   const EffectScope: typeof import('vue')['EffectScope']
+  const ExpenseRecord: typeof import('./types')['ExpenseRecord']
+  const FREQUENCY_CONFIGS: typeof import('./types')['FREQUENCY_CONFIGS']
+  const FREQUENCY_OPTIONS: typeof import('./types')['FREQUENCY_OPTIONS']
+  const FrequencyConfig: typeof import('./types')['FrequencyConfig']
+  const FrequencyType: typeof import('./types')['FrequencyType']
+  const PriceCalcResult: typeof import('./types')['PriceCalcResult']
   const [alias]: typeof import('[package-name]')['[from]']
   const [import-names]: typeof import('[package-name]')['[import-names]']
   const axios: typeof import('axios')['default']
@@ -16,6 +27,7 @@ declare global {
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
   const effectScope: typeof import('vue')['effectScope']
+  const eventBus: typeof import('./utils/eventBus')['eventBus']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
