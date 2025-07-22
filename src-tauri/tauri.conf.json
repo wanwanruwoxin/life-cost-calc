@@ -10,23 +10,6 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [
-      {
-        "title": "羊羊的记账本",
-        "width": 450,
-        "height": 700,
-        "minWidth": 350,
-        "minHeight": 600,
-        "maxWidth": 500,
-        "center": true,
-        "resizable": true,
-        "maximizable": false,
-        "decorations": true,
-        "shadow": true,
-        "theme": "Light",
-        "titleBarStyle": "Overlay"
-      }
-    ],
     "security": {
       "csp": null
     }
