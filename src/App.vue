@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { invoke } from '@tauri-apps/api/core';
+import { info } from '@tauri-apps/plugin-log';
+
 const thumbStyle: any = {
   right: "4px",
   borderRadius: "5px",
@@ -6,6 +9,9 @@ const thumbStyle: any = {
   width: "5px",
   opacity: 0.75,
 };
+
+await invoke('initialize_app')
+await info('initialize_app');
 </script>
 
 <template>
