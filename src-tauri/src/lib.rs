@@ -7,11 +7,13 @@ use tauri_plugin_log::{Target, TargetKind, WEBVIEW_TARGET};
 
 #[cfg(desktop)]
 pub fn run() {
-    let mut builder = tauri::Builder::default()
+    tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(build_log_plugin())
         .setup(|app| {
             // 创建无边框窗口
+
+            use tauri::WebviewWindowBuilder;
             let _window =
                 WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::App("index.html".into()))
                     .title("羊羊的记账本")
