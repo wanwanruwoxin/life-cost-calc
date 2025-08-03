@@ -19,7 +19,7 @@ const thumbStyle: any = {
       <!-- 主内容区域 -->
       <QPageContainer class="flex-1 bg-gradient-to-br from-gray-50 to-blue-100">
         <QScrollArea
-          class="w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg"
+          class="h-full w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg"
           :visible="false"
           :thumb-style="thumbStyle"
         >
@@ -104,19 +104,4 @@ const thumbStyle: any = {
 </template>
 
 <style scoped>
-/* 确保 QPageContainer 占据剩余空间 */
-.q-page-container {
-  flex: 1;
-  min-height: 0; /* 允许 flex 子元素收缩 */
-}
-
-/* 确保 QScrollArea 占据全部可用高度 */
-:deep(.q-scrollarea) {
-  height: 100% !important;
-}
-
-/* 确保 QPage 至少占据全部高度 */
-:deep(.q-page) {
-  min-height: 100% !important;
-}
 </style>

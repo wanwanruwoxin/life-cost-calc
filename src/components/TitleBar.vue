@@ -89,7 +89,6 @@ const handleClose = async () => {
     console.error("关闭窗口失败:", error);
   }
 };
-
 </script>
 
 <style scoped>
