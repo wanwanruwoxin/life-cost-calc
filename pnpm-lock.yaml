@@ -51,6 +51,9 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.4(vite@6.3.5(@types/node@24.0.13)(jiti@2.4.2)(sass-embedded@1.89.2))(vue@3.5.17(typescript@5.6.3))
+      cz-git:
+        specifier: ^1.12.0
+        version: 1.12.0
       sass-embedded:
         specifier: ^1.89.2
         version: 1.89.2
@@ -705,6 +708,10 @@ packages:
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  cz-git@1.12.0:
+    resolution: {integrity: sha512-LaZ+8whPPUOo6Y0Zy4nIbf6JOleV3ejp41sT6N4RPKiKKA+ICWf4ueeIlxIO8b6JtdlDxRzHH/EcRji07nDxcg==}
+    engines: {node: '>=v12.20.0'}
 
   de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -1814,6 +1821,8 @@ snapshots:
       source-map-js: 1.2.1
 
   csstype@3.1.3: {}
+
+  cz-git@1.12.0: {}
 
   de-indent@1.0.2: {}
 
