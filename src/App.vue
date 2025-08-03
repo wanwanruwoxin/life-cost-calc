@@ -12,20 +12,20 @@ const thumbStyle: any = {
 
 <template>
   <div class="app-container">
-    <QLayout view="lHh Lpr lFf" class="mx-auto bg-white min-h-screen">
+    <QLayout view="hHh lpr fFf" flex flex-col class="mx-auto bg-white h-screen">
       <!-- 头部导航栏 -->
-      <QHeader>
-        <TitleBar />
-      </QHeader>
+      <QHeader><TitleBar /></QHeader>
 
       <!-- 主内容区域 -->
-      <QPageContainer class="bg-gradient-to-br from-gray-50 to-blue-100">
+      <QPageContainer class="flex-1 bg-gradient-to-br from-gray-50 to-blue-100">
         <QScrollArea
-          class="h-[calc(100vh-120px)] w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg"
+          class="w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg"
           :visible="false"
           :thumb-style="thumbStyle"
         >
-          <QPage class="bg-gradient-to-br from-gray-50 to-blue-100 h-full p-4">
+          <QPage
+            class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-full p-4"
+          >
             <RouterView />
           </QPage>
         </QScrollArea>
@@ -103,4 +103,20 @@ const thumbStyle: any = {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* 确保 QPageContainer 占据剩余空间 */
+.q-page-container {
+  flex: 1;
+  min-height: 0; /* 允许 flex 子元素收缩 */
+}
+
+/* 确保 QScrollArea 占据全部可用高度 */
+:deep(.q-scrollarea) {
+  height: 100% !important;
+}
+
+/* 确保 QPage 至少占据全部高度 */
+:deep(.q-page) {
+  min-height: 100% !important;
+}
+</style>
