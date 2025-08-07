@@ -19,12 +19,12 @@ const thumbStyle: any = {
       <!-- 主内容区域 -->
       <QPageContainer class="flex-1 bg-gradient-to-br from-gray-50 to-blue-100">
         <QScrollArea
-          class="h-full w-full max-w-sm mx-auto sm:max-w-md md:max-w-lg"
+          class="h-full w-full max-w-sm sm:max-w-md md:max-w-lg"
           :visible="false"
           :thumb-style="thumbStyle"
         >
           <QPage
-            class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-full p-4"
+            class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-full p-1"
           >
             <RouterView />
           </QPage>

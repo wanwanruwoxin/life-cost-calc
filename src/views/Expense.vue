@@ -152,13 +152,10 @@ const saveRecord = () => {
 </script>
 
 <template>
-  <div
-    class="w-full max-w-md mx-auto p-4"
-    :class="{ 'main-content': selectedCategory }"
-  >
+  <div class="w-full max-w-md">
     <!-- 顶部标签页 -->
     <QCard
-      class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95 mb-6"
+      class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95"
       flat
       bordered
     >
@@ -186,25 +183,11 @@ const saveRecord = () => {
 
     <!-- 分类选择 -->
     <QCard
-      class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95 mb-6"
+      class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95"
       flat
       bordered
     >
-      <QCardSection
-        class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-t-4 border-b border-yellow-200"
-      >
-        <div class="text-lg font-medium flex items-center">
-          <QIcon
-            :name="
-              activeTab === 'expense' ? 'category' : 'account_balance_wallet'
-            "
-            class="mr-2"
-          />
-          {{ activeTab === "expense" ? "支出分类" : "收入分类" }}
-        </div>
-      </QCardSection>
-
-      <QCardSection class="pt-4">
+      <QCardSection>
         <div class="grid grid-cols-4 gap-3">
           <div
             v-for="category in activeTab === 'expense'

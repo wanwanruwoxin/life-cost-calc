@@ -98,13 +98,10 @@ const handleClose = async () => {
   align-items: center;
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border-bottom: 1px solid #f59e0b;
-  padding: 0 8px;
+  padding: 8px;
   user-select: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  height: 44px;
+  width: 100%;
 }
 
 .title-bar-left {
