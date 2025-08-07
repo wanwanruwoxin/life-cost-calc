@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    NumberPadButton: typeof import('./src/components/NumberPadButton.vue')['default']
+    NumberPadDialog: typeof import('./src/components/NumberPadDialog.vue')['default']
     QAvatar: typeof import('quasar')['QAvatar']
     QBadge: typeof import('quasar')['QBadge']
     QBtn: typeof import('quasar')['QBtn']

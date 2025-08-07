@@ -72,6 +72,8 @@ onMounted(() => {
         </div>
       </QCardSection>
     </QCard>
+
+    <NumberPadDialog />
   </div>
 </template>
 
