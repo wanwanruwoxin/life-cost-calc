@@ -1,9 +1,14 @@
 use std::path::PathBuf;
 use tauri::plugin::TauriPlugin;
-use tauri::Runtime;
+use tauri::{Manager, Runtime};
 use tauri_plugin_log::fern::colors::Color;
 use tauri_plugin_log::fern::colors::ColoredLevelConfig;
 use tauri_plugin_log::{Target, TargetKind, WEBVIEW_TARGET};
+
+mod commands;
+mod database;
+mod entities;
+mod migration;
 
 #[cfg(desktop)]
 pub fn run() {
@@ -11,8 +16,30 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(build_log_plugin())
         .setup(|app| {
-            // 创建无边框窗口
+            // 初始化数据库
+            let app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                match database::establish_connection().await {
+                    Ok(db) => {
+                        // 初始化默认分类数据
+                        if let Err(e) =
+                            database::category_service::initialize_default_categories(&db).await
+                        {
+                            log::error!("Failed to initialize default categories: {}", e);
+                        } else {
+                            log::info!("Database initialized successfully");
+                        }
 
+                        // 将数据库连接保存到应用状态
+                        app_handle.manage(db);
+                    }
+                    Err(e) => {
+                        log::error!("Failed to establish database connection: {}", e);
+                    }
+                }
+            });
+
+            // 创建无边框窗口
             use tauri::WebviewWindowBuilder;
             let _window =
                 WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::App("index.html".into()))
@@ -30,7 +57,19 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![
+            commands::get_categories,
+            commands::get_category_by_id,
+            commands::create_category,
+            commands::update_category,
+            commands::delete_category,
+            commands::get_records,
+            commands::get_record_by_id,
+            commands::create_record,
+            commands::update_record,
+            commands::delete_record,
+            commands::get_statistics
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

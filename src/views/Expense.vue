@@ -1,11 +1,87 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { db } from "@/utils/database";
+import type { Category } from "@/types/database";
 
 const activeTab = ref("expense");
 const selectedCategory = ref("");
 const amount = ref<number>(0);
 const note = ref("");
 const amountString = ref("0");
+
+// 动态分类数据
+const expenseCategories = ref<Category[]>([]);
+const incomeCategories = ref<Category[]>([]);
+
+// 加载分类数据
+const loadCategories = async () => {
+  try {
+    const [expenses, incomes] = await Promise.all([
+      db.categories.getCategories("expense"),
+      db.categories.getCategories("income"),
+    ]);
+
+    expenseCategories.value = expenses || [];
+    incomeCategories.value = incomes || [];
+  } catch (error) {
+    console.error("Failed to load categories:", error);
+    // 如果加载失败，使用默认数据作为后备
+    useDefaultCategories();
+  }
+};
+
+// 使用默认分类数据（后备方案）
+const useDefaultCategories = () => {
+  expenseCategories.value = [
+    {
+      category_id: "food",
+      name: "餐饮",
+      icon: "restaurant",
+      color: "orange",
+      category_type: "expense" as const,
+    },
+    {
+      category_id: "shopping",
+      name: "购物",
+      icon: "shopping_cart",
+      color: "pink",
+      category_type: "expense" as const,
+    },
+    {
+      category_id: "daily",
+      name: "日用",
+      icon: "home",
+      color: "blue",
+      category_type: "expense" as const,
+    },
+    {
+      category_id: "transport",
+      name: "交通",
+      icon: "directions_car",
+      color: "green",
+      category_type: "expense" as const,
+    },
+    // ... 其他分类
+  ];
+
+  incomeCategories.value = [
+    {
+      category_id: "salary",
+      name: "工资",
+      icon: "work",
+      color: "green",
+      category_type: "income" as const,
+    },
+    {
+      category_id: "bonus",
+      name: "奖金",
+      icon: "star",
+      color: "yellow",
+      category_type: "income" as const,
+    },
+    // ... 其他分类
+  ];
+};
 
 // 计算显示的金额
 const displayAmount = computed(() => {
@@ -23,56 +99,8 @@ const displayAmount = computed(() => {
   return amountString.value + ".00";
 });
 
-// 支出分类数据
-const expenseCategories = [
-  { id: "food", name: "餐饮", icon: "restaurant", color: "orange" },
-  { id: "shopping", name: "购物", icon: "shopping_cart", color: "pink" },
-  { id: "daily", name: "日用", icon: "home", color: "blue" },
-  { id: "transport", name: "交通", icon: "directions_car", color: "green" },
-  { id: "vegetables", name: "蔬菜", icon: "eco", color: "green" },
-  { id: "fruits", name: "水果", icon: "apple", color: "red" },
-  { id: "snacks", name: "零食", icon: "cookie", color: "brown" },
-  { id: "sports", name: "运动", icon: "fitness_center", color: "blue" },
-  { id: "entertainment", name: "娱乐", icon: "movie", color: "purple" },
-  { id: "communication", name: "通讯", icon: "phone", color: "blue" },
-  { id: "clothing", name: "服饰", icon: "checkroom", color: "pink" },
-  { id: "beauty", name: "美容", icon: "face", color: "pink" },
-  { id: "housing", name: "住房", icon: "house", color: "brown" },
-  { id: "household", name: "居家", icon: "chair", color: "grey" },
-  { id: "children", name: "孩子", icon: "child_care", color: "yellow" },
-  { id: "elderly", name: "长辈", icon: "elderly", color: "grey" },
-  { id: "social", name: "社交", icon: "group", color: "blue" },
-  { id: "travel", name: "旅行", icon: "flight", color: "cyan" },
-  { id: "tobacco", name: "烟酒", icon: "local_bar", color: "red" },
-  { id: "digital", name: "数码", icon: "devices", color: "blue" },
-  { id: "car", name: "汽车", icon: "directions_car", color: "grey" },
-  { id: "medical", name: "医疗", icon: "local_hospital", color: "red" },
-  { id: "books", name: "书籍", icon: "book", color: "brown" },
-  { id: "study", name: "学习", icon: "school", color: "blue" },
-  { id: "pets", name: "宠物", icon: "pets", color: "orange" },
-  { id: "gift_money", name: "礼金", icon: "card_giftcard", color: "red" },
-  { id: "gifts", name: "礼物", icon: "redeem", color: "pink" },
-  { id: "office", name: "办公", icon: "work", color: "grey" },
-  { id: "repair", name: "维修", icon: "build", color: "orange" },
-  { id: "donation", name: "捐赠", icon: "volunteer_activism", color: "green" },
-  { id: "lottery", name: "彩票", icon: "casino", color: "yellow" },
-  { id: "friends", name: "亲友", icon: "family_restroom", color: "blue" },
-  { id: "express", name: "快递", icon: "local_shipping", color: "brown" },
-  { id: "settings", name: "设置", icon: "settings", color: "grey" },
-];
-
-// 收入分类数据
-const incomeCategories = [
-  { id: "salary", name: "工资", icon: "work", color: "green" },
-  { id: "bonus", name: "奖金", icon: "star", color: "yellow" },
-  { id: "investment", name: "投资", icon: "trending_up", color: "blue" },
-  { id: "part_time", name: "兼职", icon: "schedule", color: "orange" },
-  { id: "gift", name: "礼金", icon: "card_giftcard", color: "red" },
-  { id: "other", name: "其他", icon: "more_horiz", color: "grey" },
-];
-
 const selectCategory = (category: any) => {
-  selectedCategory.value = category.id;
+  selectedCategory.value = category.category_id;
   // 重置金额
   amountString.value = "0";
   amount.value = 0;
@@ -129,26 +157,35 @@ const subtractOperation = () => {
   }
 };
 
-const saveRecord = () => {
+const saveRecord = async () => {
   if (!selectedCategory.value || !amount.value) {
     return;
   }
 
-  // 这里可以添加保存逻辑
-  console.log({
-    type: activeTab.value,
-    category: selectedCategory.value,
-    amount: amount.value,
-    note: note.value,
-    date: new Date(),
-  });
+  try {
+    await db.records.createRecord({
+      record_type: activeTab.value as "expense" | "income",
+      category_id: selectedCategory.value,
+      amount: amount.value.toString(),
+      note: note.value || null,
+    });
 
-  // 重置表单
-  selectedCategory.value = "";
-  amount.value = 0;
-  amountString.value = "0";
-  note.value = "";
+    console.log("Record saved successfully");
+
+    // 重置表单
+    selectedCategory.value = "";
+    amount.value = 0;
+    amountString.value = "0";
+    note.value = "";
+  } catch (error) {
+    console.error("Failed to save record:", error);
+  }
 };
+
+// 组件挂载时加载分类数据
+onMounted(() => {
+  loadCategories();
+});
 </script>
 
 <template>
@@ -193,14 +230,14 @@ const saveRecord = () => {
             v-for="category in activeTab === 'expense'
               ? expenseCategories
               : incomeCategories"
-            :key="category.id"
+            :key="category.category_id"
             @click="selectCategory(category)"
             class="flex flex-col items-center p-3 rounded-3 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
             :class="{
               'bg-yellow-100 border-2 border-yellow-400':
-                selectedCategory === category.id,
+                selectedCategory === category.category_id,
               'bg-gray-50 border border-gray-200':
-                selectedCategory !== category.id,
+                selectedCategory !== category.category_id,
             }"
           >
             <QIcon

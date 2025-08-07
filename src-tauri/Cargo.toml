@@ -27,3 +27,16 @@ log = "0.4"
 tauri-plugin-devtools = "2.0.0"
 tauri-plugin-devtools-app = "2.0.0"
 
+sea-orm = { version = "1.1.0", features = [
+    "sqlx-sqlite",
+    "macros",
+    "runtime-tokio-rustls",
+] }
+sea-orm-migration = "1.1.0"
+tokio = { version = "1", features = ["full"] }
+thiserror = "2"
+anyhow = "1.0"
+uuid = { version = "1.0", features = ["v4"] }
+dirs = "5.0"
+chrono = { version = "0.4", features = ["serde"] }
+rust_decimal = { version = "1.0", features = ["serde"] }
