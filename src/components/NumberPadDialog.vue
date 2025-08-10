@@ -1,6 +1,6 @@
 <template>
   <div bg-white>
-    <div text-2xl text-right p-1 >{{ numberCountStore.countExpression }}</div>
+    <div text-2xl text-right p-1>{{ numberCountStore.countExpression }}</div>
     <!-- 输入框 -->
     <QInput v-model="note" color="teal" filled label="备注" />
   </div>
@@ -26,15 +26,38 @@
     <NumberPadButton label="." />
     <NumberPadButton label="0" />
     <NumberPadButton label="x" />
-    <NumberPadButton :label="numberCountStore.isExpression ? '=' : '完成'"/>
+    <template v-if="numberCountStore.isExpression">
+      <NumberPadButton label="=" />
+    </template>
+    <template v-else>
+      <q-btn
+        flex-grow-1
+        flex-basis-0
+        color="yellow-6"
+        text-color="white"
+        label="完成"
+        square
+        @click="onComplete"
+      />
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useNumberCountStore } from '@/store/numberCountStore';
+import { useNumberCountStore } from "@/store/numberCountStore";
 
-const note = ref("1111");
+const note = ref("");
 const numberCountStore = useNumberCountStore();
+
+const emit = defineEmits<{
+  (e: "complete", payload: { amount: number; note: string }): void;
+}>();
+
+const onComplete = () => {
+  const raw = numberCountStore.countExpression as unknown as string;
+  const amount = Number(raw);
+  emit("complete", { amount: isNaN(amount) ? 0 : amount, note: note.value });
+};
 </script>
 
 <style scoped></style>

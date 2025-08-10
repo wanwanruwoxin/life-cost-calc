@@ -17,6 +17,7 @@ declare module 'vue' {
     QBtnToggle: typeof import('quasar')['QBtnToggle']
     QCard: typeof import('quasar')['QCard']
     QCardSection: typeof import('quasar')['QCardSection']
+    QDialog: typeof import('quasar')['QDialog']
     QFooter: typeof import('quasar')['QFooter']
     QHeader: typeof import('quasar')['QHeader']
     QIcon: typeof import('quasar')['QIcon']
