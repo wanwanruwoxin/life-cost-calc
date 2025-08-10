@@ -44,6 +44,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { useNumberCountStore } from "@/store/numberCountStore";
 
 const note = ref("");
@@ -58,6 +59,12 @@ const onComplete = () => {
   const amount = Number(raw);
   emit("complete", { amount: isNaN(amount) ? 0 : amount, note: note.value });
 };
+
+onMounted(() => {
+  note.value = "";
+  // 重置表达式，避免上次输入残留
+  numberCountStore.countExpression = "0";
+});
 </script>
 
 <style scoped></style>

@@ -133,7 +133,10 @@ onMounted(() => {
       transition-hide="slide-down"
     >
       <QCard class="w-full rounded-t-4 shadow-lg">
-        <NumberPadDialog @complete="handleNumberPadComplete" />
+        <NumberPadDialog
+          v-if="showNumberPad"
+          @complete="handleNumberPadComplete"
+        />
       </QCard>
     </QDialog>
   </div>
