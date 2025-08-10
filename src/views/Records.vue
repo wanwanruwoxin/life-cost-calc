@@ -2,20 +2,43 @@
 import { ref, onMounted, computed } from "vue";
 import { db } from "@/utils/database";
 import type { ExpenseRecord, Category } from "@/types/database";
+import MonthPickerDialog from "@/components/MonthPickerDialog.vue";
 
 const records = ref<ExpenseRecord[]>([]);
 const categories = ref<Category[]>([]);
 const loading = ref(false);
 const selectedType = ref<"all" | "expense" | "income">("all");
 
+// 月份滚轮选择（使用组件）
+const showMonthDialog = ref(false);
+const now = new Date();
+const selectedYear = ref<number>(now.getFullYear());
+const selectedMonth = ref<number>(now.getMonth() + 1); // 1-12
+
+const monthLabel = computed(
+  () => `${selectedYear.value}-${String(selectedMonth.value).padStart(2, "0")}`
+);
+
+const getMonthDateRange = (year: number, month: number) => {
+  const start = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
+  const end = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
+  return { start: start.toISOString(), end: end.toISOString() };
+};
+
 // 加载记录数据
 const loadRecords = async () => {
   loading.value = true;
   try {
-    const filter =
-      selectedType.value !== "all"
-        ? { record_type: selectedType.value }
-        : undefined;
+    const filter: any = {};
+    if (selectedType.value !== "all") {
+      filter.record_type = selectedType.value;
+    }
+    const { start, end } = getMonthDateRange(
+      selectedYear.value,
+      selectedMonth.value
+    );
+    filter.start_date = start;
+    filter.end_date = end;
     records.value = await db.records.getRecords(filter);
   } catch (error) {
     console.error("Failed to load records:", error);
@@ -54,14 +77,17 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const deleteRecord = async (id: number) => {
-  try {
-    await db.records.deleteRecord(id);
-    await loadRecords(); // 重新加载数据
-  } catch (error) {
-    console.error("Failed to delete record:", error);
+// 按月份分组记录（YYYY-MM）
+const groupedByMonth = computed(() => {
+  const groups: Record<string, ExpenseRecord[]> = {};
+  for (const rec of records.value) {
+    const key = rec.created_at ? rec.created_at.slice(0, 7) : "未知";
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(rec);
   }
-};
+  const sortedKeys = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+  return sortedKeys.map((key) => ({ key, items: groups[key] }));
+});
 
 // 计算统计数据
 const totalExpenses = computed(() => {
@@ -76,12 +102,10 @@ const totalIncome = computed(() => {
     .reduce((sum, record) => sum + parseFloat(record.amount), 0);
 });
 
-const balance = computed(() => {
-  return totalIncome.value - totalExpenses.value;
-});
+// 月份选择滚动逻辑已封装进 MonthPickerDialog 组件，此处不再需要滚动事件
 
-// 筛选类型变化时重新加载数据
-const onTypeChange = () => {
+const applyMonthFilter = () => {
+  showMonthDialog.value = false;
   loadRecords();
 };
 
@@ -93,213 +117,100 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full max-w-md mx-auto p-4">
-    <!-- 页面标题 -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-800 mb-2">支出记录</h1>
-      <p class="text-gray-600">管理您的所有支出记录</p>
-    </div>
-
-    <!-- 筛选器 -->
-    <div class="mb-6">
-      <QBtnToggle
-        v-model="selectedType"
-        @update:model-value="onTypeChange"
-        toggle-color="primary"
-        :options="[
-          { label: '全部', value: 'all' },
-          { label: '支出', value: 'expense' },
-          { label: '收入', value: 'income' },
-        ]"
-        class="w-full"
-      />
-    </div>
-
-    <!-- 统计卡片 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-      <QCard class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95">
-        <QCardSection
-          class="bg-gradient-to-br from-red-50 to-red-100 rounded-t-4"
-        >
-          <div class="flex items-center">
-            <QIcon name="trending_down" size="md" class="mr-3 text-red-500" />
-            <div>
-              <div class="text-sm text-gray-600">总支出</div>
-              <div class="text-xl font-bold text-gray-800">
-                {{ formatCurrency(totalExpenses) }}
-              </div>
-            </div>
+  <div w-full max-w-md mx-auto>
+    <div flex items-center>
+      <div flex-grow-1>
+        <QBtn
+          outline
+          color="primary"
+          icon="event"
+          :label="monthLabel"
+          @click="showMonthDialog = true"
+        />
+      </div>
+      <div flex-grow-4 flex justify-evenly items-center>
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1">收入</div>
+          <div class="text-2xl font-extrabold text-blue-600">
+            +{{ formatCurrency(totalIncome) }}
           </div>
-        </QCardSection>
-      </QCard>
-
-      <QCard class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95">
-        <QCardSection
-          class="bg-gradient-to-br from-green-50 to-green-100 rounded-t-4"
-        >
-          <div class="flex items-center">
-            <QIcon name="trending_up" size="md" class="mr-3 text-green-500" />
-            <div>
-              <div class="text-sm text-gray-600">总收入</div>
-              <div class="text-xl font-bold text-gray-800">
-                {{ formatCurrency(totalIncome) }}
-              </div>
-            </div>
-          </div>
-        </QCardSection>
-      </QCard>
-
-      <QCard class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95">
-        <QCardSection
-          class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-t-4"
-        >
-          <div class="flex items-center">
-            <QIcon
-              name="account_balance_wallet"
-              size="md"
-              class="mr-3 text-blue-500"
-            />
-            <div>
-              <div class="text-sm text-gray-600">余额</div>
-              <div
-                class="text-xl font-bold"
-                :class="{
-                  'text-green-600': balance >= 0,
-                  'text-red-600': balance < 0,
-                }"
-              >
-                {{ formatCurrency(balance) }}
-              </div>
-            </div>
-          </div>
-        </QCardSection>
-      </QCard>
-    </div>
-
-    <!-- 记录列表 -->
-    <QCard class="rounded-4 shadow-lg backdrop-blur-sm bg-white/95">
-      <QCardSection
-        class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-t-4 border-b border-indigo-100"
-      >
-        <div class="text-lg font-medium flex items-center">
-          <QIcon name="list_alt" class="mr-2" />
-          记录列表
-          <QBadge :label="records.length" color="primary" class="ml-2" />
         </div>
-      </QCardSection>
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1">支出</div>
+          <div class="text-2xl font-extrabold text-red-600">
+            -{{ formatCurrency(totalExpenses) }}
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <QCardSection class="pt-0">
-        <QInnerLoading :showing="loading">
-          <QSpinnerDots size="50px" color="primary" />
-        </QInnerLoading>
+    <MonthPickerDialog
+      v-model="showMonthDialog"
+      v-model:year="selectedYear"
+      v-model:month="selectedMonth"
+      @confirm="applyMonthFilter"
+    />
 
-        <div v-if="!loading && records.length === 0" class="text-center py-12">
-          <QIcon name="inbox" size="4rem" class="text-gray-300 mb-4" />
-          <p class="text-gray-500">暂无记录</p>
-          <QBtn
-            @click="$router.push('/expense')"
-            color="primary"
-            outline
-            class="mt-4"
-          >
-            开始记账
-          </QBtn>
+    <!-- 记录列表（每条一行，按月分组，组间分割线） -->
+    <div class="mt-4 space-y-6">
+      <div v-for="group in groupedByMonth" :key="group.key">
+        <!-- 月份分割线与标题 -->
+        <div class="flex items-center my-2">
+          <div class="flex-1 border-t border-gray-200"></div>
+          <div class="px-3 text-gray-500 text-sm">{{ group.key }}</div>
+          <div class="flex-1 border-t border-gray-200"></div>
         </div>
 
-        <div v-else-if="!loading" class="space-y-4">
+        <!-- 分组内的记录列表 -->
+        <div class="divide-y divide-gray-100 bg-white rounded-3">
           <div
-            v-for="record in records"
-            :key="record.id"
-            class="flex items-center justify-between p-4 bg-gray-50 rounded-3 border border-gray-200 hover:shadow-md transition-all duration-300"
+            v-for="record in group.items"
+            :key="record.id ?? record.created_at"
+            class="flex items-center justify-between py-3 px-2"
           >
-            <div class="flex-1">
-              <div class="flex items-center mb-2">
-                <div class="flex items-center mr-3">
-                  <QIcon
-                    :name="
-                      getCategoryInfo(record.category_id)?.icon || 'category'
-                    "
-                    :class="`text-${
-                      getCategoryInfo(record.category_id)?.color || 'gray'
-                    }-500 mr-2`"
-                    size="sm"
-                  />
-                  <h3 class="text-lg font-medium text-gray-800">
-                    {{
-                      getCategoryInfo(record.category_id)?.name ||
-                      record.category_id
-                    }}
-                  </h3>
+            <div class="flex items-center gap-3">
+              <QIcon
+                :name="getCategoryInfo(record.category_id)?.icon || 'category'"
+                :class="`text-${
+                  getCategoryInfo(record.category_id)?.color || 'gray'
+                }-500`"
+                size="md"
+              />
+              <div>
+                <div class="text-base font-medium text-gray-800">
+                  {{
+                    getCategoryInfo(record.category_id)?.name ||
+                    record.category_id
+                  }}
                 </div>
-                <QBadge
-                  :color="
-                    record.record_type === 'expense' ? 'negative' : 'positive'
-                  "
-                  :label="record.record_type === 'expense' ? '支出' : '收入'"
-                />
-              </div>
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600"
-              >
-                <div>
-                  <span class="font-medium">金额：</span>
-                  <span
-                    :class="{
-                      'text-red-600': record.record_type === 'expense',
-                      'text-green-600': record.record_type === 'income',
-                    }"
-                  >
-                    {{ record.record_type === "expense" ? "-" : "+"
-                    }}{{ formatCurrency(record.amount) }}
-                  </span>
-                </div>
-                <div v-if="record.note">
-                  <span class="font-medium">备注：</span>
+                <div v-if="record.note" class="text-xs text-gray-400 mt-0.5">
                   {{ record.note }}
                 </div>
-              </div>
-              <div class="text-xs text-gray-400 mt-2">
-                记录时间：{{
-                  record.created_at ? formatDate(record.created_at) : "未知"
-                }}
+                <div class="text-xs text-gray-400 mt-0.5">
+                  {{
+                    record.created_at
+                      ? formatDate(record.created_at)
+                      : "未知时间"
+                  }}
+                </div>
               </div>
             </div>
 
-            <div class="ml-4">
-              <QBtn
-                icon="delete"
-                color="negative"
-                flat
-                round
-                @click="deleteRecord(record.id!)"
-                class="hover:bg-red-50"
-              >
-                <QTooltip>删除记录</QTooltip>
-              </QBtn>
+            <div
+              class="text-lg font-semibold"
+              :class="{
+                'text-blue-600': record.record_type === 'income',
+                'text-red-600': record.record_type === 'expense',
+              }"
+            >
+              {{ record.record_type === "expense" ? "-" : "+"
+              }}{{ formatCurrency(record.amount) }}
             </div>
           </div>
         </div>
-      </QCardSection>
-    </QCard>
-
-    <!-- 添加记录按钮 -->
-    <div class="fixed bottom-6 right-6">
-      <QBtn
-        icon="add"
-        color="primary"
-        fab
-        class="shadow-lg"
-        @click="$router.push('/expense')"
-      >
-        <QTooltip>添加新记录</QTooltip>
-      </QBtn>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-/* 记录项悬停效果 */
-.record-item:hover {
-  transform: translateY(-2px);
-}
-</style>
+<style scoped></style>

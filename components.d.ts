@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    MonthPickerDialog: typeof import('./src/components/MonthPickerDialog.vue')['default']
     NumberPadButton: typeof import('./src/components/NumberPadButton.vue')['default']
     NumberPadDialog: typeof import('./src/components/NumberPadDialog.vue')['default']
     QAvatar: typeof import('quasar')['QAvatar']
@@ -16,6 +17,7 @@ declare module 'vue' {
     QBtnGroup: typeof import('quasar')['QBtnGroup']
     QBtnToggle: typeof import('quasar')['QBtnToggle']
     QCard: typeof import('quasar')['QCard']
+    QCardActions: typeof import('quasar')['QCardActions']
     QCardSection: typeof import('quasar')['QCardSection']
     QDialog: typeof import('quasar')['QDialog']
     QFooter: typeof import('quasar')['QFooter']
@@ -32,6 +34,7 @@ declare module 'vue' {
     QPageContainer: typeof import('quasar')['QPageContainer']
     QRadio: typeof import('quasar')['QRadio']
     QScrollArea: typeof import('quasar')['QScrollArea']
+    QSelect: typeof import('quasar')['QSelect']
     QSpace: typeof import('quasar')['QSpace']
     QSpinnerDots: typeof import('quasar')['QSpinnerDots']
     QTab: typeof import('quasar')['QTab']
